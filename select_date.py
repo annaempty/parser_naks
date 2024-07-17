@@ -42,8 +42,9 @@ def find_button_to_switch(browser):
     # plase_1 = plase.find_element(By.ID, 'app_reestr_centers') # Или тут
     # list_elem = plase_1.find_element(By.CSS_SELECTOR, 'p')
     # return browser, list_elem
-
+    # через try: 
     ref = browser.find_element(By.XPATH, "//a[text()='След.']")
+    new_window_url = "https://naks.ru" + ref.get_attribute("href") # я не уверена, что так работает
     print(ref.text)
 
     return browser, ref
@@ -58,6 +59,7 @@ def check_number_entries(elem):
 
 
 def switch_webpage(browser, list_elem):
+    # Нажать на кнопку следующее, но уже не работает, если когда-то работала 
     switch_1_step = list_elem[1].find_element(By.CLASS_NAME, 'text')
     switch_buttons_list = switch_1_step[1].find_element(By.CSS_SELECTOR, 'a')
     for switch_button in switch_buttons_list:
