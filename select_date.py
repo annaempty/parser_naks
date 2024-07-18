@@ -23,9 +23,17 @@ def open_web(html):
 
 # Находит поля с датами и заполняет их
 def find_table_by_date(browser, date_from, date_to):
+    """
+    Заполняет поля с датами
+    :param browser: веб-сайт
+    :param date_from: дата от
+    :param date_to: дата до
+    :return:
+    """
     # id первой кнопки аттестации до - arrFilter_DATE_ACTIVE_TO_1
     elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_1')
     elem_data_1.send_keys(date_from + Keys.RETURN)
+
     # id второй кнопки аттестации до -arrFilter_DATE_ACTIVE_TO_2
     time.sleep(4)
     elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_2')
