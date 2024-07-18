@@ -64,6 +64,16 @@ def find_button_to_switch(browser):
 
 
 def check_number_entries(elem):
+    """
+    Проверяет вышли ли мы за пределы ограничения на вывод
+    нужно переписать с использованием библиотеки selenium
+    1. Найти элемент
+    2. выудить количество записей
+    3. Выкинуть предупреждение если необходимо
+
+    :param elem:
+    :return: ничего
+    """
     number_pattern = r"\d{1,3}"
     find_pattern = r"НАЙДЕНО ЗАПИСЕЙ"
     if not re.search(find_pattern, elem[0].text) is None:
