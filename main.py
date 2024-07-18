@@ -23,6 +23,11 @@ def find_table_body(browser):
 
 
 def read_title(tbody_r):
+    """
+    Функция считывает первую строку таблицы (заголовки)
+    :param tbody_r: список веб-элементов
+    :return: dict_colum: словарь с названиями колонок
+    """
     dict_colum = {}
     tbody_d = tbody_r[0].find_elements(By.TAG_NAME, 'td')
     for j in range(len(tbody_d) - 2):
