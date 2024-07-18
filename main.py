@@ -20,32 +20,20 @@ def find_table_body(html_text):
 
 def read_title(tbody_r):
     dict_colum = {}
-    flag = 0
-    for i in tbody_r:
-        tbody_d = i.find_all('td')
-        number = 0
-        for j in tbody_d:
-            if flag < 9:
-                dict_colum[number] = j.text.strip()
-                flag += 1
-            else:
-                return dict_colum
+    tbody_d = tbody_r[0].find_all('td')
+    for j in range(len(tbody_d)):
+        dict_colum[j] = tbody_d[j].text.strip()
+    return dict_colum
 
 
 def read_data(tbody_r):
-    dict_tail = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [],
-                 6: [], 7: [], 8: []}
-    flag = 0
-    for i in tbody_r:
-        tbody_d = i.find_all('td')
-        number = 0
-        for j in tbody_d:
-            if flag < 9:
-                flag = 10
-                break
-            else:
-                dict_tail[number].append(j.text.strip())
-            number += 1
+    dict_tail = {}
+    for i in range(1, len(tbody_r)):
+        tbody_d = tbody_r[i].find_all('td')
+        for j in range(len(tbody_d)-2):
+            if j not in dict_tail:
+                dict_tail[j] = []
+            dict_tail[j].append(tbody_d[j].text.strip())
     df = pd.DataFrame(dict_tail)
     return df
 
@@ -60,6 +48,7 @@ if __name__ == '__main__':
     browser, html_text = find_table_by_date(browser, date_from, date_to)
     start_table = find_table_body(html_text)
     dict_columns = read_title(start_table)
+    print(dict_columns)
     df = read_data(start_table)
     df.rename(columns=dict_columns)
     df.to_csv('naks.csv', sep=';')
@@ -67,9 +56,6 @@ if __name__ == '__main__':
     #df.append(df_1)
     #elements = browser.find_element(By.CLASS_NAME, 'zagolovok-tabl')
     #class ="col-md-8 col-xl-9 order-2 order-md-1"
-
-
-
 
 
 
