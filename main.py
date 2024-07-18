@@ -9,10 +9,13 @@ from select_date import find_table_by_date, open_web, switch_webpage
 
 
 def find_table_body(browser):
-    # Переписать поиск таблицы как тут -> ref = browser.find_element(By.XPATH, "//a[text()='След.']")
-    # root = BeautifulSoup(html_text, 'html.parser')
-    # field = root.find('div', {"class": "col-md-8 col-xl-9 order-2 order-md-1"})
-    # table = field.find('table', {'class': 'tabl'})
+    """
+    Принимает: browser - html браузер
+    Функция принимает уже открытый по необходимой ссылке сайт
+    и находит список элементов tr в таблице с необходимыми нам данными.
+    Возвращает список из веб-элементов
+    """
+
     table = browser.find_element(By.XPATH, "//table[@class='tabl']")
     #tbody = table.find('tbody')
     tbody_r = table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
