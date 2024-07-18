@@ -36,6 +36,11 @@ def read_title(tbody_r):
 
 
 def read_data(tbody_r):
+    """
+    Функция считывает основную часть таблицы (тело)
+    :param tbody_r: список веб-элементов
+    :return: dict_tail: словарь с основной частью таблицы
+    """
     dict_tail = {}
     for i in range(1, len(tbody_r)):
         tbody_d = tbody_r[i].find_elements(By.TAG_NAME, 'td')
