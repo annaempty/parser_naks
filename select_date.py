@@ -82,6 +82,7 @@ def check_number_entries(elem):
 
 
 def switch_webpage(browser, list_elem):
+    # Кажется фигня, надо выкинуть :)
     # Нажать на кнопку следующее, но уже не работает, если когда-то работала 
     switch_1_step = list_elem[1].find_element(By.CLASS_NAME, 'text')
     switch_buttons_list = switch_1_step[1].find_element(By.CSS_SELECTOR, 'a')
