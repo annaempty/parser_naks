@@ -47,15 +47,14 @@ def find_table_by_date(browser, date_from, date_to):
     return browser
 
 
-# Находит список кнопок для перехода на страничку с другими технологиями
 def find_button_to_switch(browser):
-    # staff = browser.find_element(By.CLASS_NAME, 'all-staff')
-    # container = staff.find_element(By.CLASS_NAME, 'container')
-    # row = container.find_element(By.CLASS_NAME, 'row')
-    # plase = row.find_element(By.CLASS_NAME, 'col-md-8 col-xl-9 order-2 order-md-1') # Ломается тут
-    # plase_1 = plase.find_element(By.ID, 'app_reestr_centers') # Или тут
-    # list_elem = plase_1.find_element(By.CSS_SELECTOR, 'p')
-    # return browser, list_elem
+    """
+    Находит список кнопок для перехода на страничку с другими технологиями
+    Тут нужно реализовать нажатие на клавишу и поиск кнопки через try
+    :param browser: веб-сайт
+    :return: пока ничего полезного
+    """
+
     # через try: 
     ref = browser.find_element(By.XPATH, "//a[text()='След.']")
     new_window_url = "https://naks.ru" + ref.get_attribute("href") # я не уверена, что так работает
