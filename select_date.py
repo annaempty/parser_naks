@@ -8,6 +8,12 @@ import re
 
 # Открывет сайт по ссылке
 def open_web(html):
+    """
+    Открывает сайт по ссылке (ссылка должна вести на сайт,
+    где уже выбран аттестационный пункт)
+    :param html: ссылка на сайт
+    :return: browser: веб-сайт
+    """
     option = Options()
     option.add_argument("--disable-infobars")
     browser = webdriver.Chrome(option)
