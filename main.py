@@ -8,20 +8,21 @@ from select_date import find_table_by_date, open_web, switch_webpage
 
 
 
-def find_table_body(html_text):
+def find_table_body(browser):
     # Переписать поиск таблицы как тут -> ref = browser.find_element(By.XPATH, "//a[text()='След.']")
-    root = BeautifulSoup(html_text, 'html.parser')
-    field = root.find('div', {"class": "col-md-8 col-xl-9 order-2 order-md-1"})
-    table = field.find('table', {'class': 'tabl'})
-    tbody = table.find('tbody')
-    tbody_r = tbody.find_all('tr')
+    # root = BeautifulSoup(html_text, 'html.parser')
+    # field = root.find('div', {"class": "col-md-8 col-xl-9 order-2 order-md-1"})
+    # table = field.find('table', {'class': 'tabl'})
+    table = browser.find_element(By.XPATH, "//table[@class='tabl']")
+    #tbody = table.find('tbody')
+    tbody_r = table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
     return tbody_r
 
 
 def read_title(tbody_r):
     dict_colum = {}
-    tbody_d = tbody_r[0].find_all('td')
-    for j in range(len(tbody_d)):
+    tbody_d = tbody_r[0].find_elements(By.TAG_NAME, 'td')
+    for j in range(len(tbody_d) - 2):
         dict_colum[j] = tbody_d[j].text.strip()
     return dict_colum
 
@@ -29,8 +30,8 @@ def read_title(tbody_r):
 def read_data(tbody_r):
     dict_tail = {}
     for i in range(1, len(tbody_r)):
-        tbody_d = tbody_r[i].find_all('td')
-        for j in range(len(tbody_d)-2):
+        tbody_d = tbody_r[i].find_elements(By.TAG_NAME, 'td')
+        for j in range(len(tbody_d) - 2):
             if j not in dict_tail:
                 dict_tail[j] = []
             dict_tail[j].append(tbody_d[j].text.strip())
@@ -45,8 +46,8 @@ if __name__ == '__main__':
     date_to = '31.12.2024'
 
     browser = open_web(html)
-    browser, html_text = find_table_by_date(browser, date_from, date_to)
-    start_table = find_table_body(html_text)
+    browser = find_table_by_date(browser, date_from, date_to)
+    start_table = find_table_body(browser)
     dict_columns = read_title(start_table)
     print(dict_columns)
     df = read_data(start_table)
