@@ -39,10 +39,10 @@ def read_data(tbody_r):
     for i in tbody_r:
         tbody_d = i.find_all('td')
         number = 0
-        # Изменить интерацию
         for j in tbody_d:
-            if flag < 1:
-                flag = 1
+            if flag < 9:
+                flag = 10
+                break
             else:
                 dict_tail[number].append(j.text.strip())
             number += 1
