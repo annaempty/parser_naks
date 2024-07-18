@@ -24,13 +24,13 @@ def find_table_by_date(browser, date_from, date_to):
     time.sleep(4)
     elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_2')
     elem_data_1.send_keys(date_to + Keys.RETURN)
-    time.sleep(10)
+    time.sleep(4)
     # class кнопки фильтр inputbuttonflat
     # На кнопку фильтр тыкать не нужно, фильтруется после ввода дат
     # browser.find_element(By.CLASS_NAME, 'inputbuttonflat').click()
     # time.sleep(10)
-    html_text = browser.page_source
-    return browser, html_text
+    #html_text = browser.page_source
+    return browser
 
 
 # Находит список кнопок для перехода на страничку с другими технологиями
