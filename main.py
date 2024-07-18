@@ -33,19 +33,11 @@ def read_title(tbody_r):
 
 
 def read_data(tbody_r):
-    dict_tail = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [],
-                 6: [], 7: [], 8: []}
-    flag = 0
-    for i in tbody_r:
-        tbody_d = i.find_all('td')
-        number = 0
-        for j in tbody_d:
-            if flag < 9:
-                flag = 10
-                break
-            else:
-                dict_tail[number].append(j.text.strip())
-            number += 1
+    dict_tail = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+    for i in range(1, len(tbody_r)):
+        tbody_d = tbody_r[i].find_all('td')
+        for j in range(len(tbody_d)-2):
+            dict_tail[j].append(tbody_d[j].text.strip())
     df = pd.DataFrame(dict_tail)
     return df
 
