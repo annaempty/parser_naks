@@ -24,7 +24,7 @@ def open_web(html):
 # Находит поля с датами и заполняет их
 def find_table_by_date(browser, date_from, date_to):
     """
-    Заполняет поля с датами
+    Находит поля с датами и заполняет поля с датами
     :param browser: веб-сайт
     :param date_from: дата от
     :param date_to: дата до
@@ -33,17 +33,11 @@ def find_table_by_date(browser, date_from, date_to):
     # id первой кнопки аттестации до - arrFilter_DATE_ACTIVE_TO_1
     elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_1')
     elem_data_1.send_keys(date_from + Keys.RETURN)
-
     # id второй кнопки аттестации до -arrFilter_DATE_ACTIVE_TO_2
     time.sleep(4)
     elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_2')
     elem_data_1.send_keys(date_to + Keys.RETURN)
     time.sleep(4)
-    # class кнопки фильтр inputbuttonflat
-    # На кнопку фильтр тыкать не нужно, фильтруется после ввода дат
-    # browser.find_element(By.CLASS_NAME, 'inputbuttonflat').click()
-    # time.sleep(10)
-    #html_text = browser.page_source
     return browser
 
 
@@ -54,7 +48,6 @@ def find_button_to_switch(browser):
     :param browser: веб-сайт
     :return: пока ничего полезного
     """
-
     # через try: 
     ref = browser.find_element(By.XPATH, "//a[text()='След.']")
     new_window_url = "https://naks.ru" + ref.get_attribute("href") # я не уверена, что так работает
@@ -98,4 +91,4 @@ if __name__ == '__main__':
     html = 'https://naks.ru/registry/reg/st/?PAGEN_1=1&arrSORT=&arrFilter_pf%5Bnum_acst%5D%5B%5D=3173145&arrFilter_pf%5Bnum_sv%5D=%C0%D6%D1%D2-87-&arrFilter_DATE_ACTIVE_TO_1=01.01.2027&arrFilter_DATE_ACTIVE_TO_2=31.12.2027&arrFilter_ff%5BNAME%5D=&arrFilter_ff%5BPREVIEW_TEXT%5D=&set_filter=%D4%E8%EB%FC%F2%F0&set_filter=Y'
     browser = open_web(html)
     browser, list_elem = find_button_to_switch(browser)
-    # browser, list_elem = switch_webpage(browser, list_elem)
+
