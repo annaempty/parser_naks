@@ -22,7 +22,7 @@ def find_table_body(browser):
     return tbody_r
 
 
-def read_title(tbody_r):
+def read_title(tbody_r, num_of_skip_col):
     """
     Функция считывает первую строку таблицы (заголовки)
     :param tbody_r: список веб-элементов
@@ -30,12 +30,12 @@ def read_title(tbody_r):
     """
     dict_colum = {}
     tbody_d = tbody_r[0].find_elements(By.TAG_NAME, 'td')
-    for j in range(len(tbody_d) - 2):
+    for j in range(len(tbody_d) - num_of_skip_col):
         dict_colum[j] = tbody_d[j].text.strip()
     return dict_colum
 
 
-def read_data(tbody_r):
+def read_data(tbody_r, num_of_skip_col):
     """
     Функция считывает основную часть таблицы (тело)
     :param tbody_r: список веб-элементов
@@ -44,7 +44,7 @@ def read_data(tbody_r):
     dict_tail = {}
     for i in range(1, len(tbody_r)):
         tbody_d = tbody_r[i].find_elements(By.TAG_NAME, 'td')
-        for j in range(len(tbody_d) - 2):
+        for j in range(len(tbody_d) - num_of_skip_col):
             if j not in dict_tail:
                 dict_tail[j] = []
             dict_tail[j].append(tbody_d[j].text.strip())
@@ -57,14 +57,14 @@ if __name__ == '__main__':
     html = 'https://naks.ru/registry/reg/st/?arrSORT=&arrFilter_pf%5Bnum_acst%5D%5B%5D=3173145&arrFilter_pf%5Bnum_sv%5D=%C0%D6%D1%D2-87-&arrFilter_DATE_ACTIVE_TO_1=&arrFilter_DATE_ACTIVE_TO_2=&arrFilter_ff%5BNAME%5D=&arrFilter_ff%5BPREVIEW_TEXT%5D=&set_filter=%D4%E8%EB%FC%F2%F0&set_filter=Y'
     date_from = '01.01.2024'
     date_to = '31.12.2024'
+    num_of_skip_col = 2  # Количество пропускаемых(неинформативных) столбцов с конца
 
     browser = open_web(html)
     browser = find_table_by_date(browser, date_from, date_to)
     start_table = find_table_body(browser)
-    dict_columns = read_title(start_table)
-    print(dict_columns)
-    df = read_data(start_table)
-    df.rename(columns=dict_columns)
+    dict_columns = read_title(start_table, num_of_skip_col)
+    df = read_data(start_table, num_of_skip_col)
+    df.rename(columns=dict_columns, inplace=True)
     df.to_csv('naks.csv', sep=';')
     #df_read = pd.read_csv('naks.csv', sep=';')
     #df.append(df_1)
