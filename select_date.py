@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.common import NoSuchElementException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -30,31 +32,35 @@ def find_table_by_date(browser, date_from, date_to):
     :param date_to: дата до
     :return:
     """
-    # id первой кнопки аттестации до - arrFilter_DATE_ACTIVE_TO_1
+    # id первой кнопки аттестации от - arrFilter_DATE_ACTIVE_TO_1
     elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_1')
     elem_data_1.send_keys(date_from + Keys.RETURN)
     # id второй кнопки аттестации до -arrFilter_DATE_ACTIVE_TO_2
-    time.sleep(4)
-    elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_2')
-    elem_data_1.send_keys(date_to + Keys.RETURN)
-    time.sleep(4)
+    time.sleep(1)
+    elem_data_2 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_2')
+    elem_data_2.send_keys(date_to + Keys.RETURN)
+    time.sleep(1)
     return browser
 
 
 def find_button_to_switch(browser):
     """
-    Находит список кнопок для перехода на страничку с другими технологиями
-    Тут нужно реализовать нажатие на клавишу и поиск кнопки через try
+    Переходит по всем доступным страницам через кнопку "Следующая"
     :param browser: веб-сайт
-    :return: пока ничего полезного
+    :return: последняя страница веб-сайта (насколько я понимаю)
     """
-    # через try: 
-    ref = browser.find_element(By.XPATH, "//a[text()='След.']")
-    new_window_url = "https://naks.ru" + ref.get_attribute("href") # я не уверена, что так работает
-    print(ref.text)
+    while True:
+        try:
+            elem = browser.find_element(By.XPATH, "//a[text()='След.']")
+            ActionChains(browser).move_to_element(elem).click().perform()
+            time.sleep(1)
+        except NoSuchElementException:
+            print('Button \'Следующая\' not found')
+            break
+    return browser
 
-    return browser, ref
-
+def test(driver):
+    driver.find_element('btn btn-outline-light btn-xs ml-2').click()
 
 def check_number_entries(elem):
     """
@@ -76,7 +82,7 @@ def check_number_entries(elem):
 
 def switch_webpage(browser, list_elem):
     # Кажется фигня, надо выкинуть :)
-    # Нажать на кнопку следующее, но уже не работает, если когда-то работала 
+    # Нажать на кнопку следующее, но уже не работает, если когда-то работала
     switch_1_step = list_elem[1].find_element(By.CLASS_NAME, 'text')
     switch_buttons_list = switch_1_step[1].find_element(By.CSS_SELECTOR, 'a')
     for switch_button in switch_buttons_list:
@@ -90,5 +96,5 @@ def switch_webpage(browser, list_elem):
 if __name__ == '__main__':
     html = 'https://naks.ru/registry/reg/st/?PAGEN_1=1&arrSORT=&arrFilter_pf%5Bnum_acst%5D%5B%5D=3173145&arrFilter_pf%5Bnum_sv%5D=%C0%D6%D1%D2-87-&arrFilter_DATE_ACTIVE_TO_1=01.01.2027&arrFilter_DATE_ACTIVE_TO_2=31.12.2027&arrFilter_ff%5BNAME%5D=&arrFilter_ff%5BPREVIEW_TEXT%5D=&set_filter=%D4%E8%EB%FC%F2%F0&set_filter=Y'
     browser = open_web(html)
-    browser, list_elem = find_button_to_switch(browser)
+    find_button_to_switch(browser)
 
