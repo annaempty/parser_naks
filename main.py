@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 import pandas as pd
-from select_date import find_table_by_date, open_web, switch_webpage
+from select_date import enter_date, open_web, switch_webpage, find_button_to_switch
 
 
 
@@ -35,21 +35,19 @@ def read_title(tbody_r, num_of_skip_col):
     return dict_colum
 
 
-def read_data(tbody_r, num_of_skip_col):
+def read_data(tbody_r, num_of_skip_col, dict_tail):
     """
-    Функция считывает основную часть таблицы (тело)
+    Функция считывает основную часть таблицы (тело) на текущей странице
     :param tbody_r: список веб-элементов
     :return: dict_tail: словарь с основной частью таблицы
     """
-    dict_tail = {}
     for i in range(1, len(tbody_r)):
         tbody_d = tbody_r[i].find_elements(By.TAG_NAME, 'td')
         for j in range(len(tbody_d) - num_of_skip_col):
             if j not in dict_tail:
                 dict_tail[j] = []
             dict_tail[j].append(tbody_d[j].text.strip())
-    df = pd.DataFrame(dict_tail)
-    return df
+    return dict_tail
 
 
 if __name__ == '__main__':
@@ -60,12 +58,26 @@ if __name__ == '__main__':
     num_of_skip_col = 2  # Количество пропускаемых(неинформативных) столбцов с конца
 
     browser = open_web(html)
-    browser = find_table_by_date(browser, date_from, date_to)
+    browser = enter_date(browser, date_from, date_to)
+
+    dict = {}
     start_table = find_table_body(browser)
     dict_columns = read_title(start_table, num_of_skip_col)
-    df = read_data(start_table, num_of_skip_col)
+    dict = read_data(start_table, num_of_skip_col, dict)
+    while True:
+        btn = find_button_to_switch(browser)
+        if btn:
+            browser = switch_webpage(browser, btn)
+            start_table = find_table_body(browser)
+            dict = read_data(start_table, num_of_skip_col, dict)
+        else:
+            break
+    df = pd.DataFrame(dict)
     df.rename(columns=dict_columns, inplace=True)
-    df.to_csv('naks.csv', sep=';')
+    print(df)
+    #df.to_csv('naks.csv', sep=';')
+
+
     #df_read = pd.read_csv('naks.csv', sep=';')
     #df.append(df_1)
     #elements = browser.find_element(By.CLASS_NAME, 'zagolovok-tabl')
