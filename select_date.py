@@ -55,22 +55,19 @@ def find_button_to_switch(browser):
         return None
 
 
-def check_number_entries(elem):
+def check_number_entries(browser):
     """
-    Проверяет вышли ли мы за пределы ограничения на вывод
-    нужно переписать с использованием библиотеки selenium
-    1. Найти элемент
-    2. выудить количество записей
-    3. Выкинуть предупреждение если необходимо
+    Проверяет, сколько записей нашли в заданном периоде
+    :param browser: веб-сайт,
+    :return: True, если найдено больше 500, иначе - False
+    """
 
-    :param elem:
-    :return: ничего
-    """
-    number_pattern = r"\d{1,3}"
-    find_pattern = r"НАЙДЕНО ЗАПИСЕЙ"
-    if not re.search(find_pattern, elem[0].text) is None:
-        if int(re.search(number_pattern, elem[0].text)) == 500:
-            print("Скорее всего превышен лимит по количеству записей (500 или больше)")
+    staff = browser.find_element(By.XPATH, "//div[@class='all-staff']")
+    elem = staff.find_element(By.TAG_NAME, 'strong')
+    number_of_str = elem.text.replace(" ", "").split(":")[-1]
+    if int(number_of_str) == 500:
+        return True
+    return False
 
 
 def switch_webpage(browser, btn):
@@ -88,10 +85,13 @@ def switch_webpage(browser, btn):
 if __name__ == '__main__':
     html = 'https://naks.ru/registry/reg/st/?PAGEN_1=1&arrSORT=&arrFilter_pf%5Bnum_acst%5D%5B%5D=3173145&arrFilter_pf%5Bnum_sv%5D=%C0%D6%D1%D2-87-&arrFilter_DATE_ACTIVE_TO_1=01.01.2027&arrFilter_DATE_ACTIVE_TO_2=31.12.2027&arrFilter_ff%5BNAME%5D=&arrFilter_ff%5BPREVIEW_TEXT%5D=&set_filter=%D4%E8%EB%FC%F2%F0&set_filter=Y'
     browser = open_web(html)
+    check_number_entries(browser)
+    '''
     while True:
         btn = find_button_to_switch(browser)
         if btn:
             browser = switch_webpage(browser, btn)
         else:
             break
+    '''
 
