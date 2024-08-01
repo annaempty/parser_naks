@@ -30,14 +30,19 @@ def enter_date(browser, date_from, date_to):
     :param date_to: дата до
     :return:
     """
-    # id поля ввода "даты от" - arrFilter_DATE_ACTIVE_TO_1
-    elem_data_1 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_1')
-    elem_data_1.send_keys(date_from + Keys.RETURN)
-    # id поля ввода "даты по" -arrFilter_DATE_ACTIVE_TO_2
+    id_data_from = 'arrFilter_DATE_ACTIVE_TO_1'
+    id_data_to = 'arrFilter_DATE_ACTIVE_TO_2'
+
+    elem_data_from = browser.find_element(By.ID, id_data_from)
+    elem_data_from.clear()
+    elem_data_from.send_keys(date_from + Keys.RETURN)
     time.sleep(1)
-    elem_data_2 = browser.find_element(By.ID, 'arrFilter_DATE_ACTIVE_TO_2')
-    elem_data_2.send_keys(date_to + Keys.RETURN)
+
+    elem_data_to = browser.find_element(By.ID, id_data_to)
+    elem_data_to.clear()
+    elem_data_to.send_keys(date_to + Keys.RETURN)
     time.sleep(1)
+
     return browser
 
 
@@ -76,6 +81,10 @@ def switch_webpage(browser, btn):
     :param browser: веб-сайт, btn - кнопка "Следующая"
     :return: browser: веб-сайт (возможно не нужно)
     """
+    staff = browser.find_element(By.XPATH, "//div[@class='all-staff']")
+    elem = staff.find_element(By.TAG_NAME, 'thead')
+    if elem:
+        browser.execute_script("arguments[0].remove();", elem) #удаляем дурацкое окно "для просмотра содержания", которое закрывает кнопку "След."
     if btn:
         ActionChains(browser).move_to_element(btn).click().perform()
         time.sleep(1)
@@ -85,13 +94,10 @@ def switch_webpage(browser, btn):
 if __name__ == '__main__':
     html = 'https://naks.ru/registry/reg/st/?PAGEN_1=1&arrSORT=&arrFilter_pf%5Bnum_acst%5D%5B%5D=3173145&arrFilter_pf%5Bnum_sv%5D=%C0%D6%D1%D2-87-&arrFilter_DATE_ACTIVE_TO_1=01.01.2027&arrFilter_DATE_ACTIVE_TO_2=31.12.2027&arrFilter_ff%5BNAME%5D=&arrFilter_ff%5BPREVIEW_TEXT%5D=&set_filter=%D4%E8%EB%FC%F2%F0&set_filter=Y'
     browser = open_web(html)
-    check_number_entries(browser)
-    '''
+
     while True:
         btn = find_button_to_switch(browser)
         if btn:
             browser = switch_webpage(browser, btn)
         else:
             break
-    '''
-
