@@ -5,7 +5,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
-import re
 
 
 def open_web(html):
@@ -66,10 +65,11 @@ def check_number_entries(browser):
     :param browser: веб-сайт,
     :return: True, если найдено больше 500, иначе - False
     """
-
     staff = browser.find_element(By.XPATH, "//div[@class='all-staff']")
     elem = staff.find_element(By.TAG_NAME, 'strong')
     number_of_str = elem.text.replace(" ", "").split(":")[-1]
+    if number_of_str == 'ЗАПИСЕЙНЕНАЙДЕНО':
+        return 0
     if int(number_of_str) == 500:
         return True
     return False
@@ -81,10 +81,13 @@ def switch_webpage(browser, btn):
     :param browser: веб-сайт, btn - кнопка "Следующая"
     :return: browser: веб-сайт (возможно не нужно)
     """
-    staff = browser.find_element(By.XPATH, "//div[@class='all-staff']")
-    elem = staff.find_element(By.TAG_NAME, 'thead')
-    if elem:
-        browser.execute_script("arguments[0].remove();", elem) #удаляем дурацкое окно "для просмотра содержания", которое закрывает кнопку "След."
+    try:
+        staff = browser.find_element(By.XPATH, "//div[@class='all-staff']")
+        elem = staff.find_element(By.TAG_NAME, 'thead')
+        browser.execute_script("arguments[0].remove();", elem)  # удаляем дурацкое окно "для просмотра содержания", которое закрывает кнопку "След."
+    except NoSuchElementException:
+        pass
+
     if btn:
         ActionChains(browser).move_to_element(btn).click().perform()
         time.sleep(1)

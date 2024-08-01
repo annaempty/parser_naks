@@ -68,11 +68,17 @@ def change_date_step(browser, date_from, date_to):
 
 
 def change_date(date_from, date_to, date_final):
+    """
+    Меняет даты "с" и "по", переходя к следующему временному отрезку (весь диапазон парсинга разбит на маленькие временные отрезки)
+    :param дата начала отрезка <class 'str'>,, дата конца отрезка <class 'str'>, конечная дата парсинга <class 'str'>
+    :return: новые дата начала отрезка <class 'str'>,, дата конца отрезка <class 'str'>
+    """
     date_from = datetime.datetime.strptime(date_from, "%d.%m.%Y")
     date_to = datetime.datetime.strptime(date_to, "%d.%m.%Y")
+    date_final = datetime.datetime.strptime(date_final, "%d.%m.%Y")
     date_step = (date_to - date_from).days
 
-    date_from = date_to
+    date_from = date_to + datetime.timedelta(days=1) #если мы считываем данные с учетом крайних дат
     date_to = date_to + datetime.timedelta(days=date_step)
 
     if date_to > date_final:
@@ -89,9 +95,14 @@ def convert_date_to_string(date):
     """
     return ".".join((str(date).split(" ")[0].split("-"))[::-1])
 
+
 if __name__ == '__main__':
     # Необходимо будет вынести в текстовый файл:
     html = 'https://naks.ru/registry/reg/st/?arrSORT=&arrFilter_pf%5Bnum_acst%5D%5B%5D=3173145&arrFilter_pf%5Bnum_sv%5D=%C0%D6%D1%D2-87-&arrFilter_DATE_ACTIVE_TO_1=&arrFilter_DATE_ACTIVE_TO_2=&arrFilter_ff%5BNAME%5D=&arrFilter_ff%5BPREVIEW_TEXT%5D=&set_filter=%D4%E8%EB%FC%F2%F0&set_filter=Y'
+
+    #весь интервал парсинга [date_from, date_to_final] разбиваем на отрезки [date_from, date_to_current]
+    #date_from и date_to_current в процессе парсинга меняются, сдвигаясь вправо (информация об изначальной date_from затирается)
+    # date_to_final - фиксированный параметр
     date_from = '01.01.2022'
     date_to_final = '31.12.2024'
     date_to_current = date_to_final
@@ -106,12 +117,10 @@ if __name__ == '__main__':
     start_table = find_table_body(browser)
     dict_columns = read_title(start_table, num_of_skip_col)
 
-    while date_to_current <= date_to_final:
-        counter = 0
+    while date_to_current <= date_to_final and date_from < date_to_current:
+        start_table = find_table_body(browser)
         dict = read_data(start_table, num_of_skip_col, dict)
-        while True:
-            counter += 1
-            print(counter)
+        while True: #пробегаемся по всем страницам и считываем данные
             btn = find_button_to_switch(browser)
             if btn:
                 browser = switch_webpage(browser, btn)
@@ -119,14 +128,13 @@ if __name__ == '__main__':
                 dict = read_data(start_table, num_of_skip_col, dict)
             else:
                 break
-        date_from, date_to_current = change_date(date_from, date_to_current)
-        browser = enter_date(browser, date_from, date_to_current)
-        browser, date_to_current = change_date_step(browser, date_from, date_to_current)
+        date_from, date_to_current = change_date(date_from, date_to_current, date_to_final) #изменяем текущий отрезок [date_from, date_to_current]
+        browser = enter_date(browser, date_from, date_to_current) #вставляем новый диапазон дат на сайте
+        browser, date_to_current = change_date_step(browser, date_from, date_to_current) #проверяем, что записей < 500, если это не так, уменьшаем диапазон, сдвигая date_to_current влево
 
     df = pd.DataFrame(dict)
     df.rename(columns=dict_columns, inplace=True)
-    print(df)
-    #df.to_csv('naks.csv', sep=';')
+    df.to_csv('naks.csv', sep=';')
 
 
     #df_read = pd.read_csv('naks.csv', sep=';')
